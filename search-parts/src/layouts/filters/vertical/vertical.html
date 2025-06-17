@@ -193,7 +193,18 @@
 												>
 											</pnp-filterdateinterval>
 											</div>
-										{{/eq}}	
+										{{else}}
+											{{#eq filter.selectedTemplate 'NumberRangeFilterTemplate'}}
+												<div class="filter--value">
+													<pnp-filternumberrange 
+														data-instance-id="{{@root.instanceId}}" 
+														data-filter="{{JSONstringify filter 2}}"
+														data-theme-variant="{{JSONstringify @root.theme}}"
+													>
+													</pnp-filternumberrange>
+												</div>
+											{{/eq}}	
+										{{/eq}}
 									{{/eq}}
 								{{/eq}}
 							{{/eq}}

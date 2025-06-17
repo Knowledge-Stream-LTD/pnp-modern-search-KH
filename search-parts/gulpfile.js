@@ -128,6 +128,8 @@ const envCheck = build.subTask('environmentCheck', (gulp, config, done) => {
             );
 
             if (config.production) {
+                generatedConfiguration.devtool = false; // Disable source maps in production
+
                 const lastDirName = path.basename(__dirname);
                 const dropPath = path.join(__dirname, 'temp', 'stats');
                 generatedConfiguration.plugins.push(new bundleAnalyzer.BundleAnalyzerPlugin({
