@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ISearchBoxContainerProps } from './ISearchBoxContainerProps';
 import { QueryPathBehavior, UrlHelper, PageOpenBehavior } from '../../../helpers/UrlHelper';
-import { MessageBar, MessageBarType, SearchBox, IconButton, ISearchBox } from '@fluentui/react';
+import { MessageBar, MessageBarType, Icon } from '@fluentui/react';
 import { ISearchBoxContainerState } from './ISearchBoxContainerState';
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import * as webPartStrings from 'SearchBoxWebPartStrings';
@@ -39,44 +39,37 @@ export default class SearchBoxContainer extends React.Component<ISearchBoxContai
     }
 
     private renderBasicSearchBox(): JSX.Element {
-
-        let searchBoxRef = React.createRef<ISearchBox>();
-
+        let searchBoxRef = React.createRef<HTMLInputElement>();
         return (
-            <div className={styles.searchBoxWrapper}>
-                <SearchBox
-                    componentRef={searchBoxRef}
+            <div className={styles.searchBoxBootstrapWrapper} dir="rtl">
+                <span className={styles.searchBoxIconWrapper}>
+                    <Icon iconName="Search" className={styles.searchBoxIcon} />
+                </span>
+                <input
+                    ref={searchBoxRef}
+                    className={styles.searchBoxBootstrapInput}
                     placeholder={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                    ariaLabel={this.props.placeholderText ? this.props.placeholderText : webPartStrings.SearchBox.DefaultPlaceholder}
-                    className={styles.searchTextField}
+                    type="text"
                     value={this.state.searchInputValue}
                     autoComplete="off"
                     onChange={(event) => {
                         const newInputValue = event && event.currentTarget ? event.currentTarget.value : "";
                         const inputChanged = !isEmpty(this.state.searchInputValue) && isEmpty(newInputValue);
-
                         if (this.props.reQueryOnClear && inputChanged) {
                             this._onSearch('', true);
-                            searchBoxRef.current.focus();
+                            if (searchBoxRef.current) {
+                                searchBoxRef.current.focus();
+                            }
                         } else {
                             this.setState({ searchInputValue: newInputValue });
                         }
                     }}
-                    onSearch={() => this._onSearch(this.state.searchInputValue)}
-                    onClear={() => {
-                        this._onSearch('', true);
-                        searchBoxRef.current.focus();
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                            this._onSearch(this.state.searchInputValue);
+                        }
                     }}
                 />
-                <div className={styles.searchButton}>
-                    {this.state.searchInputValue &&
-                        <IconButton
-                            onClick={() => this._onSearch(this.state.searchInputValue)}
-                            iconProps={{ iconName: 'Forward' }}
-                            ariaLabel={webPartStrings.SearchBox.SearchButtonLabel}
-                        />
-                    }
-                </div>
             </div>
         );
     }

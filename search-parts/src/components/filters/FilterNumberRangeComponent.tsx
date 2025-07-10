@@ -8,13 +8,7 @@ import {
   ExtensibilityConstants,
 } from "@pnp/modern-search-extensibility";
 import * as ReactDOM from "react-dom";
-import {
-  ITheme,
-  TextField,
-  Link,
-  MessageBar,
-  MessageBarType,
-} from "@fluentui/react";
+import { MessageBar, MessageBarType } from "@fluentui/react";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
 
 export interface IFilterNumberRangeComponentProps {
@@ -51,45 +45,52 @@ export class FilterNumberRangeComponent extends React.Component<
 
   public render() {
     return (
-      <div>
-        <TextField
-          label="From"
-          type="number"
-          value={this.state.selectedFrom}
-          onChange={this._updateFrom}
-          styles={{ root: { marginBottom: 8 } }}
-        />
-        <TextField
-          label="To"
-          type="number"
-          value={this.state.selectedTo}
-          onChange={this._updateTo}
-          styles={{ root: { marginBottom: 8 } }}
-        />
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <Link
-            theme={this.props.themeVariant as ITheme}
-            onClick={this._clearFilters}
-            disabled={
-              !this.state.selectedFrom &&
-              !this.state.selectedTo &&
-              !this.state.lastAppliedFrom &&
-              !this.state.lastAppliedTo
-            }
+      <div className="section-anim open">
+        <div className="d-flex align-items-center mb-2 mt-2 mx-2 justify-content-center flex-row-reverse gap-2">
+          <span
+            style={{
+              fontSize: "1.3em",
+              minWidth: 24,
+              textAlign: "center",
+            }}
           >
-            Clear
-          </Link>
-          <Link
-            theme={this.props.themeVariant as ITheme}
-            onClick={this._applyFilter}
-            disabled={
-              (this.state.selectedFrom === this.state.lastAppliedFrom &&
-                this.state.selectedTo === this.state.lastAppliedTo) ||
-              (!this.state.selectedFrom && !this.state.selectedTo)
-            }
+            $
+          </span>
+          <input
+            className="form-control flex-grow-1"
+            placeholder="עד"
+            type="number"
+            value={this.state.selectedTo}
+            onChange={(e) => this._updateTo(e, e.target.value)}
+            style={{
+              background: "rgb(250, 251, 252)",
+              border: "1px solid rgb(224, 224, 224)",
+              borderRadius: 8,
+              textAlign: "center",
+            }}
+          />
+          <span
+            className="mx-1 text-muted"
+            style={{
+              fontSize: "1.3em",
+              userSelect: "none",
+            }}
           >
-            Apply
-          </Link>
+            -
+          </span>
+          <input
+            className="form-control flex-grow-1"
+            placeholder="מ-"
+            type="number"
+            value={this.state.selectedFrom}
+            onChange={(e) => this._updateFrom(e, e.target.value)}
+            style={{
+              background: "rgb(250, 251, 252)",
+              border: "1px solid rgb(224, 224, 224)",
+              borderRadius: 8,
+              textAlign: "center",
+            }}
+          />
         </div>
       </div>
     );

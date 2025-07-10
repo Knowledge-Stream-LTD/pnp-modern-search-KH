@@ -1,129 +1,218 @@
-<content id="data-content">
-
-    <style>
-
-       /* Insert your CSS overrides here */
-       .example-themePrimary a {
-            color: {{@root.theme.palette.themePrimary}};
-        }
-
-        .icon {
-            width: 20px;
-            height: 16px;
-        }
-
-        ul.template--custom {
-            list-style: none;
-            padding-left: 5px;
-        }
-
-        ul.template--custom li {
-            display: flex;
-            padding: 8px;
-        }
-
-
-    </style>
-
-    <div class="template">
-
-        {{#if @root.properties.showSelectedFilters}}
-            <pnp-selectedfilters
-                data-filters="{{JSONstringify filters.selectedFilters 2}}"
-                data-filters-configuration="{{JSONstringify filters.filtersConfiguration 2}}"
-                data-instance-id="{{filters.instanceId}}"
-                data-operator="{{filters.filterOperator}}"
-                data-theme-variant="{{JSONstringify @root.theme}}"
-            ></pnp-selectedfilters>
-        {{/if}}
-
-        <div class="template--header">
-            {{#if @root.properties.showResultsCount}}
-                <div class="template--resultCount">
-                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.data.totalItemsCount @root.inputQueryText}}</label>
-                </div>
-            {{/if}}
-
-            <div class="template--sort">
-                <pnp-sortfield
-                    data-fields="{{JSONstringify @root.properties.dataSourceProperties.sortList}}"
-                    data-default-selected-field="{{sort.selectedSortFieldName}}"
-                    data-default-direction="{{sort.selectedSortDirection}}"
-                    data-theme-variant="{{JSONstringify @root.theme}}">
-                </pnp-sortfield>
-            </div>
-        </div>
-
-        <ul class="template--custom">
-            {{#each data.items as |item|}}
-
-                <pnp-select
-                    data-enabled="{{@root.properties.itemSelectionProps.allowItemSelection}}"
-                    data-index="{{@index}}"
-                    data-is-selected="{{isItemSelected @root.selectedKeys @index}}">
-
-                    <template id="content">
-
-                        {{#> resultTypes item=item}}
-                            {{!-- The block below will be used as default item template if no result types matched --}}
-                            <li>
-                                <pnp-iconfile class="icon" data-extension="{{slot item @root.slots.FileType}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-iconfile>
-                                <span class="example-themePrimary"><a href="{{slot item @root.slots.Path}}">{{slot item @root.slots.Title}}</a></span>
-                            </li>
-                        {{/resultTypes}}
-                    </template>
-
-                </pnp-select>
-
-            {{/each}}
-        </ul>
-    </div>
-
-    {{#if @root.properties.paging.showPaging}}
-        <pnp-pagination
-            data-total-items="{{@root.data.totalItemsCount}}"
-            data-hide-first-last-pages="{{@root.properties.paging.hideFirstLastPages}}"
-            data-hide-disabled="{{@root.properties.paging.hideDisabled}}"
-            data-hide-navigation="{{@root.properties.paging.hideNavigation}}"
-            data-range="{{@root.properties.paging.pagingRange}}"
-            data-items-count-per-page="{{@root.properties.paging.itemsCountPerPage}}"
-            data-current-page-number="{{@root.paging.currentPageNumber}}"
-        >
-        </pnp-pagination>
+<style>
+.project-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.project-placeholder-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  margin: 0 2px;
+}
+</style>
+{{#each @root.data.items}}
+<div
+  class="row g-0 align-items-center border-bottom border-1 border-secondary-subtle py-3"
+  style="min-height: 140px"
+>
+  <!-- Left: Project Image and ID -->
+  <div
+    class="col-2 d-flex flex-column align-items-center justify-content-center"
+  >
+    {{#if prjMainPicOWSIMGE}}
+    <img
+      class="img-fluid rounded mb-2"
+      alt="{{prjNameOWSTEXT}}"
+      src="{{prjMainPicOWSIMGE}}"
+      style="max-height: 90px; object-fit: cover; border-radius: 10px"
+    />
+    {{else}}
+    <img
+      class="project-placeholder mb-2"
+      src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/prjPlaceholder.png"
+      alt="Project Placeholder"
+      style="width: 90px; height: 90px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 10px; object-fit:cover;"
+    />
     {{/if}}
+    <span class="text-secondary mt-2" style="font-size: 0.85rem"
+      >מס. פרויקט</span
+    >
+    <span
+      class="text-secondary fw-bolder text-nowrap"
+      style="font-size: 1.1rem"
+    >
+      {{#if prjIDNumberOWSTEXT}}{{prjIDNumberOWSTEXT}}{{else}}—{{/if}}
+    </span>
+  </div>
 
-</content>
-
-<content id="placeholder-content">
-
-    <style>
-
-        .placeholder .icon {
-            width: 20px;
-            height: 16px;
-            margin-right: 5px;
-        }
-
-        .placeholder ul {
-            list-style: none;
-        }
-
-        .placeholder ul li {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-        }
-
-    </style>
-
-    <div class="placeholder">
-        <ul>
-            {{#times @root.properties.paging.itemsCountPerPage}}
-                <li>
-                    <div class="icon placeholder--shimmer"></div>
-                    <span class="placeholder--shimmer placeholder--line" style="width: 60%"></span>
-                </li>
-            {{/times}}
-        </ul>
+  <!-- Right: Project Details -->
+  <div class="col-10 px-4 pb-3">
+    <!-- Amount + Status -->
+    <div class="d-flex align-items-center justify-content-between">
+      <div
+        class="bg-light rounded px-4 py-2 text-dark fw-bold fs-5"
+        style="min-width: 110px; text-align: center"
+      >
+        {{#if prjScopeInDollarsOWSTNMBR}}{{prjScopeInDollarsOWSTNMBR}}
+        ${{else}}—{{/if}}
+      </div>
+      <div class="ms-4">
+        <div class="d-flex align-items-center gap-2">
+          <span
+            class="badge rounded-pill bg-success d-inline-flex align-items-center gap-1"
+            style="font-size: 0.85rem; padding: 0.25em 0.8em; height: 28px"
+          >
+            <span style="font-size: 7px; margin-left: 6px; margin-right: 2px"
+              >&#9679;</span
+            >
+            {{#if isNewProject}}
+              חדש
+            {{else}}
+              {{#if prjStatusMagvinetOWSTEXT}}{{prjStatusMagvinetOWSTEXT}}{{else}}סטטוס לא זמין{{/if}}
+            {{/if}}
+          </span>
+          <div class="fw-medium fs-6">
+            <span class="me-2 mb-auto">
+              {{#if
+              prjStatusPriorityOWSTEXT}}{{prjStatusPriorityOWSTEXT}}{{else}}—{{/if}}
+            </span>
+          </div>
+        </div>
+        <span class="text-secondary fs-6 fw-light d-block mt-1">
+          עודכן ב- {{#if LastModifiedTime}} {{getDate LastModifiedTime
+          "DD.MM.YYYY"}} {{else}} — {{/if}}
+        </span>
+      </div>
     </div>
-</content>
+
+    <!-- Project Title + Supplier -->
+    <div class="d-flex align-items-center justify-content-between mt-2">
+      <div class="d-flex align-items-center gap-3">
+        <div class="fw-bold fs-5">
+          {{#if prjNameOWSTEXT}}{{prjNameOWSTEXT}}{{else}}{{Title}}{{/if}}
+          <div
+            class="d-flex align-items-center gap-2 fw-light text-end fs-6 mt-1"
+          >
+            <span>
+              {{#if
+              prjSupplierNameOWSTEXT}}{{prjSupplierNameOWSTEXT}}{{else}}—{{/if}}
+            </span>
+            <span
+              class="fw-light fs-6 text-success d-inline-flex align-items-center pe-2 border-1 border-black border-end"
+            >
+              <i class="text-success ms-1 fa-regular fa-folder-closed"></i>
+              <span class="fw-bold ms-2">
+                {{#if prjTypeOWSCHCS}} {{prjTypeOWSCHCS}} {{#if
+                prjGenericTotal}}
+                <span class="ms-1">
+                  {{prjGenericUsed}} / {{prjGenericTotal}}
+                </span>
+                {{/if}} {{else}} — {{/if}}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="d-flex align-items-center justify-content-between mt-4">
+      <div class="d-flex flex-row gap-1">
+        {{#if prjPopulationsOWSCHCM}}
+        <span
+          class=""
+          style="
+            display: inline-block;
+            line-height: 1.2;
+            height: 18px;
+            font-size: 0.95em;
+            vertical-align: middle;
+          "
+        >
+          {{populationsDisplay prjPopulationsOWSCHCM}}
+        </span>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- Domains + Button -->
+    <div class="d-flex align-items-center justify-content-between mt-2">
+      <div class="d-flex flex-row flex-wrap gap-2 align-items-center">
+        {{#if prjTopicsOWSCHCM}} {{#each (split prjTopicsOWSCHCM ";#") as
+        |topic|}} {{#if (eq topic "בריאות")}}
+        <img
+          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/Heart%20Pulse.svg"
+          alt="בריאות"
+          style="
+            height: 28px;
+            width: 28px;
+            vertical-align: middle;
+            margin-left: 4px;
+          "
+        />
+        {{/if}} {{#if (eq topic "חברה")}}
+        <img
+          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/Tea%20Cup.svg"
+          alt="חברה"
+          style="
+            height: 28px;
+            width: 28px;
+            vertical-align: middle;
+            margin-left: 4px;
+          "
+        />
+        {{/if}} {{#if (eq topic "חינוך")}}
+        <img
+          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/Notebook.svg"
+          alt="חינוך"
+          style="
+            height: 28px;
+            width: 28px;
+            vertical-align: middle;
+            margin-left: 4px;
+          "
+        />
+        {{/if}} {{#if (eq topic "תרבות ופנאי")}}
+        <img
+          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/Football.svg"
+          alt="תרבות ופנאי"
+          style="
+            height: 28px;
+            width: 28px;
+            vertical-align: middle;
+            margin-left: 4px;
+          "
+        />
+        {{/if}} {{#if (eq topic "עליה וקליטה")}}
+        <img
+          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/Hand%20Heart.svg"
+          alt="עליה וקליטה"
+          style="
+            height: 28px;
+            width: 28px;
+            vertical-align: middle;
+            margin-left: 4px;
+          "
+        />
+        {{/if}}
+        <span>{{topic}}</span>
+        {{/each}} {{/if}}
+      </div>
+<a
+  href="{{#if (getSiteBaseUrl Path)}}{{getSiteBaseUrl Path}}SitePages/prjPage.aspx?prjid={{prjIDNumberOWSTEXT}}{{else}}#{{/if}}"
+  target="_blank"
+  class="btn btn-outline-primary rounded-pill fw-bolder border-2 px-4 py-2 ms-3 me-auto"
+  style="width: auto; flex-shrink: 0"
+>כניסה לפרויקט</a>
+    </div>
+  </div>
+</div>
+{{/each}}

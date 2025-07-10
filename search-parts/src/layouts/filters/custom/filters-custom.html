@@ -1,32 +1,282 @@
 <content id="data-content">
+    
+    <style>
 
-	{{#each @root.filters as |filter|}}    
-	
-		<div><strong>{{filter.filterName}}</strong></div>
+		.filter {
+			margin-bottom: 10px;
+		}
+    
+		.filter--value {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			color: #092F63;
+			padding-bottom: 5px;
+		}
+		.filter--count {
+			margin-left: 0px;
+			font-family: Rubik, Arial, sans-serif;
+			font-weight: 400;
+			font-size: 16px;
+			line-height: 20px;
+			letter-spacing: 0;
+			text-align: right;
+			white-space: nowrap;
+			color: #092F63;
+		}
+		[dir="rtl"] .filter--count {
+			margin-left: 0;
+			margin-right: 8px;
+		}
 
-		<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}"></pnp-filtersearchbox>
-	
-		{{#each filter.values}}
-			<pnp-filtercheckbox 
-				data-filter-name="{{filter.filterName}}" 
-				data-name="{{name}}" 
-				data-value="{{value}}" 
-				data-selected="{{selected}}" 
-				data-disabled="{{disabled}}"
-				data-theme-variant="{{JSONstringify @root.theme}}"
-			>
-			</pnp-filtercheckbox>
-		{{/each}}
+		.filter--values-list {
+			overflow: auto;
+			max-height: 400px;
+		}
+
+		.filter--message {
+			padding: 10px;
+		}
 		
-		{{#eq filter.values.length 0}}
-			<div>{{@root.strings.FilterNoValuesMessage}}</div>
-		{{else}}
-		
-			{{#if filter.isMulti}}
-				<pnp-filter-multi data-filter-name="{{filter.filterName}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filter-multi>
-			{{/if}}
-		{{/eq}}
+	    .filter--name {
+			font-family: {{@root.theme.fonts.large.fontFamily}};
+			font-weight: {{@root.theme.fonts.large.fontWeight}};
+			font-size: {{@root.theme.fonts.large.fontSize}};
+			margin-bottom: 0;
+		}
 
-	{{/each}}
+		.filter--option {
+			margin-bottom: 8px;
+			padding-left: 10px;
+		}
 
+		pnp-filtercheckbox {
+			max-width: 100%;
+		}
+
+        .collapsible-header-flex {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .collapsible-header-flex .filter--name {
+            margin-bottom: 0;
+        }
+        .ms-Checkbox-text {
+            font-size:16px;
+			color: #092F63;
+        }
+
+		.ms-Checkbox-checkbox {
+			border: 1px solid #092F63;
+			height: 22px;
+			width: 22px;
+		}
+
+		.ms-Checkbox-label {
+			align-items: center;
+		}
+				        		                
+    </style>
+
+    <div class="template vertical">  
+
+    {{!--
+      PnP Modern Search v4 - Customization for Project Catalog Filters
+      --------------------------------------------------------------
+      CHANGES BY: [Your Name/Team]
+      DATE: [2025-06-30]
+      PURPOSE: Render Apply/Clear (FilterMulti) buttons inline with the filter group header/title (not in the dropdown or footer), using Handlebars/HTML for non-ComboBox filters.
+      REASON: The Fluent UI/React component already renders the group title. To avoid duplication, only the buttons are rendered in the <template id="collapsible-header">. The flex container is kept for layout control.
+      HOW:
+        - For ComboBox filters, the heading is still rendered here for legacy reasons.
+        - For all other filters, only the Apply/Clear buttons are rendered in the <template id="collapsible-header"> (no group title).
+        - The React component's headerActions prop is not used in this architecture.
+      If you need to revert to React-driven header actions, remove the buttons from this template and use headerActions in the React component.
+    --}}
+
+	{{#each @root.filters as |filter|}}
+		<div class="filter">
+			{{#eq filter.selectedTemplate 'ComboBoxFilterTemplate'}}
+				<div class="filter--name">{{filter.displayName}}</div>
+				<div class="filter--value">
+					<pnp-filtercombobox 
+						data-instance-id="{{@root.instanceId}}" 
+						data-filter-name="{{filter.filterName}}" 
+						data-is-multi="{{filter.isMulti}}"
+						data-show-count="{{filter.showCount}}"
+						data-operator="{{filter.operator}}"
+						data-theme-variant="{{JSONstringify @root.theme}}"
+						>
+							{{#each filter.values}}
+								<option value="{{value}}" data-selected="{{selected}}" data-disabled="{{disabled}}" data-count="{{count}}">{{name}}</option>
+							{{/each}}
+					</pnp-filtercombobox>
+				</div>
+			{{else}}
+				<pnp-collapsible data-group-name="{{filter.displayName}}" data-default-collapsed="{{#or hasSelectedValues expandByDefault selectedOnce}}false{{else}}true{{/or}}" data-theme-variant="{{JSONstringify @root.theme}}">
+					<template id="collapsible-header">
+						{{#if filter.isMulti}}
+							<div class="collapsible-header-flex">
+								<pnp-filtermultiselect 
+									data-instance-id="{{@root.instanceId}}" 
+									data-filter-name="{{filter.filterName}}" 
+									data-apply-disabled="{{#if filter.canApply}}false{{else}}true{{/if}}" 
+									data-clear-disabled="{{#if filter.canClear}}false{{else}}true{{/if}}">
+								</pnp-filtermultiselect>
+							</div>
+						{{/if}}
+					</template>
+					<template id="collapsible-content">
+							{{#eq filter.selectedTemplate 'DateRangeFilterTemplate'}}
+								<div class="filter--value">
+									<pnp-filterdaterange 
+										data-instance-id="{{@root.instanceId}}" 
+										data-filter="{{JSONstringify filter 2}}"
+										data-theme-variant="{{JSONstringify @root.theme}}"
+									></pnp-filterdaterange>
+								</div>
+							{{else}}
+								{{#eq filter.selectedTemplate 'CheckboxFilterTemplate'}}
+
+									{{#if filter.isMulti}}
+										<div class="filter--option">
+											<pnp-filteroperator 
+												data-instance-id="{{@root.instanceId}}"
+												data-filter-name="{{filter.filterName}}" 
+												data-operator="{{filter.operator}}" 
+												data-theme-variant="{{JSONstringify @root.theme}}"
+											></pnp-filteroperator>
+										</div>
+									{{/if}}
+								
+									<div class="filter--option">
+										<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
+									</div>
+
+									<div class="filter--values-list">
+										{{#each filter.values}}
+											<div title="{{name}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
+												<pnp-filtercheckbox 
+													data-instance-id="{{@root.instanceId}}" 
+													data-filter-name="{{filter.filterName}}" 
+													data-name="{{name}}" 
+													data-value="{{value}}" 
+													data-selected="{{selected}}" 
+													data-disabled="{{disabled}}" 
+													data-count="{{count}}"
+													data-is-multi="{{../isMulti}}"
+													data-theme-variant="{{JSONstringify @root.theme}}"
+												>
+												</pnp-filtercheckbox>
+												{{#if ../showCount}}
+													<span data-ui-test-id="filterCount" class="filter--count">{{count}}</span>
+												{{/if}}
+											</div>
+										{{/each}}
+									</div>
+								{{else}}
+									{{#eq filter.selectedTemplate 'PeopleTemplate'}}
+										{{#if filter.isMulti}}
+											<div class="filter--option">
+												<pnp-filteroperator 
+													data-instance-id="{{@root.instanceId}}"
+													data-filter-name="{{filter.filterName}}" 
+													data-operator="{{filter.operator}}" 
+													data-theme-variant="{{JSONstringify @root.theme}}"
+												></pnp-filteroperator>
+											</div>
+										{{/if}}
+							
+										<div class="filter--option">
+											<pnp-filtersearchbox data-filter="{{JSONstringify filter}}" data-instance-id="{{@root.instanceId}}" data-theme-variant="{{JSONstringify @root.theme}}"></pnp-filtersearchbox>
+										</div>
+
+										<div class="filter--values-list">
+											{{#each filter.values}}
+											
+											<!-- From localSharePointResults: Admin@tcwlv.onmicrosoft.com | Kasper Larsen | 693A30232E667C6D656D626572736869707C61646D696E407463776C762E6F6E6D6963726F736F66742E636F6D i:0#.f|membership|admin@tcwlv.onmicrosoft.com -->
+											<!-- From localPeopleResults: i:0#.f|membership|pattif@tcwlv.onmicrosoft.com -->
+										   
+												<!-- <div title="{{#with (split name '|')}}{{[1]}}({{[0]}}){{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value"> -->
+													
+													{{#eq (itemAt (split name "|") 1) "membership"}} <!-- this must be from localPeopleResults -->
+														<div title="{{#with (split name '|')}}{{[2]}}{{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
+														<pnp-filtercheckbox 
+															data-instance-id="{{@root.instanceId}}" 
+															data-filter-name="{{filter.filterName}}" 
+															data-name= "{{#with (split name '|')}}{{[2]}}{{/with}}" 
+															data-value="{{value}}" 
+															data-selected="{{selected}}" 
+															data-disabled="{{disabled}}" 
+															data-count="{{count}}"
+															data-is-multi="{{../isMulti}}"
+															data-theme-variant="{{JSONstringify @root.theme}}"
+														>
+														</pnp-filtercheckbox>
+														{{#if ../showCount}}
+															<span data-ui-test-id="filterCount">({{count}})</span>
+														{{/if}}
+														</div>
+													{{else}}
+													<div title="{{#with (split name '|')}}{{[1]}}{{/with}} {{#if ../showCount}}({{count}}){{/if}}" class="filter--value">
+														<pnp-filtercheckbox 
+															data-instance-id="{{@root.instanceId}}" 
+															data-filter-name="{{filter.filterName}}" 
+															data-name= "{{#with (split name '|')}}{{[1]}}{{/with}}" 
+															data-value="{{value}}" 
+															data-selected="{{selected}}" 
+															data-disabled="{{disabled}}" 
+															data-count="{{count}}"
+															data-is-multi="{{../isMulti}}"
+															data-theme-variant="{{JSONstringify @root.theme}}"
+														>
+														</pnp-filtercheckbox>
+														{{#if ../showCount}}
+															<span data-ui-test-id="filterCount">{{count}}</span>
+														{{/if}}
+														</div>
+													{{/eq}}
+													
+
+													
+											{{/each}}
+										</div>
+									{{else}}
+										{{#eq filter.selectedTemplate 'DateIntervalFilterTemplate'}}
+											<div class="filter--value">
+												<pnp-filterdateinterval 
+													data-instance-id="{{@root.instanceId}}" 
+													data-filter="{{JSONstringify filter 2}}"
+													data-theme-variant="{{JSONstringify @root.theme}}"
+												>
+											</pnp-filterdateinterval>
+											</div>
+										{{else}}
+											{{#eq filter.selectedTemplate 'NumberRangeFilterTemplate'}}
+												<div class="filter--value">
+													<pnp-filternumberrange 
+														data-instance-id="{{@root.instanceId}}" 
+														data-filter="{{JSONstringify filter 2}}"
+														data-theme-variant="{{JSONstringify @root.theme}}"
+													>
+													</pnp-filternumberrange>
+												</div>
+											{{/eq}}	
+										{{/eq}}
+									{{/eq}}
+								{{/eq}}
+							{{/eq}}
+
+						</template>
+
+				</pnp-collapsible>
+			{{/eq}}
+		</div>
+    	{{/each}}
+	</div>
 </content>

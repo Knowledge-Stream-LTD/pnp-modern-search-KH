@@ -61,6 +61,7 @@ import { BaseWebPart } from '../../common/BaseWebPart';
 import commonStyles from '../../styles/Common.module.scss';
 import { UrlHelper } from '../../helpers/UrlHelper';
 import { ObjectHelper } from '../../helpers/ObjectHelper';
+import { PopulationsHelper } from "../../helpers/PopulationsHelper";
 import { ItemSelectionMode } from '../../models/common/IItemSelectionProps';
 import { PropertyPaneAsyncCombo } from '../../controls/PropertyPaneAsyncCombo/PropertyPaneAsyncCombo';
 import { DynamicPropertyHelper } from '../../helpers/DynamicPropertyHelper';
@@ -550,6 +551,9 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
 
         // Initializes dynamic data connections. This could trigger a render if a connection is made with an other component resulting to a render race condition.
         this.ensureDynamicDataSourcesConnection();
+
+        // Register custom Handlebars helpers
+        UrlHelper.registerGetSiteBaseUrlHelper(this.templateService.Handlebars);
 
         return super.onInit();
     }
@@ -1621,7 +1625,7 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
     }
 
     /**
-     * Builds the data source options list from the available data sources
+     * Builds the data source options from the available data sources
      */
     private getDataSourceOptions(): IPropertyPaneChoiceGroupOption[] {
 
@@ -2868,3 +2872,5 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         return queryTransformationFields;
     }
 }
+
+PopulationsHelper.register();

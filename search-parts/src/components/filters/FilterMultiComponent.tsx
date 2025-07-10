@@ -1,11 +1,8 @@
 import * as React from "react";
 import { BaseWebComponent, ExtensibilityConstants } from "@pnp/modern-search-extensibility";
 import * as ReactDOM from "react-dom";
-import { DefaultButton, PrimaryButton } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { ITheme } from '@fluentui/react';
 import styles from "./FilterMultiComponent.module.scss";
-import * as strings from 'CommonStrings';
 
 
 type FilterMultiEventCallback = () => void;
@@ -47,21 +44,23 @@ export class FilterMulti extends React.Component<IFilterMultiProps, IFilterMulti
     }
 
     public render() {
-        return <div className={styles.filterMultiActions}>
-            <PrimaryButton
-                className={styles.applyBtn}
-                disabled={this.props.applyDisabled}
-                theme={this.props.themeVariant as ITheme}
-                onClick={this._applyFilters}>
-                {strings.Filters.ApplyAllFiltersButtonLabel}
-            </PrimaryButton>
-            <DefaultButton
-                className={styles.clearBtn}
-                theme={this.props.themeVariant as ITheme}
+        return <div className={styles.filterMultiActions + " section-buttons-anim open d-flex gap-2 text-nowrap"}>
+            <button
+                className={"btn btn-link p-0 ms-2 fw-bold text-nowrap clearBtn " + styles.clearBtnColor}
+                type="button"
+                onClick={this._clearFilters}
                 disabled={this.props.clearDisabled}
-                onClick={this._clearFilters}>
-                {strings.Filters.ClearAllFiltersButtonLabel}
-            </DefaultButton>
+            >
+                ניקוי
+            </button>
+            <button
+                className={"btn rounded-pill px-2 fw-bold p-0 text-nowrap applyBtn " + styles.applyBtnBorder}
+                type="button"
+                onClick={this._applyFilters}
+                disabled={this.props.applyDisabled}
+            >
+                החל
+            </button>
         </div>;
     }
 
