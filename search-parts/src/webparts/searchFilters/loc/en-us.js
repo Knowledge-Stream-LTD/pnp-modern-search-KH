@@ -47,8 +47,7 @@ define([], function() {
                     ComboBoxTemplate: "Combo box",
                     DateIntervalTemplate: "Date interval",
                     PeopleTemplate: "People Template",
-                    TaxonomyPickerTemplate: "Taxonomy picker",
-                    NumberRangeTemplate: "Number range"
+                    TaxonomyPickerTemplate: "Taxonomy picker"
                 },
                 SortBy: "Sort values by",
                 SortDirection: "Sort direction",

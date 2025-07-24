@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseWebComponent, IDataFilterInfo, IDataFilterValueInfo, ExtensibilityConstants } from '@pnp/modern-search-extensibility';
 import * as ReactDOM from 'react-dom';
-import { ChoiceGroup, IChoiceGroupOption, Checkbox } from '@fluentui/react';
+import { Checkbox, ChoiceGroup, IChoiceGroupOption, IStyleFunctionOrObject, ITextProps, ITextStyles, ITheme, Text } from '@fluentui/react';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface IFilterCheckBoxProps {
@@ -72,40 +72,47 @@ export class FilterCheckBoxComponent extends React.Component<IFilterCheckBoxProp
 
         let renderInput: JSX.Element = null;
         let textColor: string = this.props.themeVariant && this.props.themeVariant.isInverted ? (this.props.themeVariant ? this.props.themeVariant.semanticColors.bodyText : '#323130') : this.props.themeVariant.semanticColors.inputText;
+        const textComponentStyles: IStyleFunctionOrObject<ITextProps, ITextStyles> = {
+            root: {
+                color: textColor
+            }
+        };
+
+        let labelValue = filterValue.name;
+        if(filterValue.name.toString().indexOf("i:0#") > -1) 
+        {
+            labelValue = filterValue.name.toString().split("|")[1] + "(" + filterValue.name.toString().split("|")[0] + ")";
+        }
         
 
         if (this.props.isMulti) {
-            renderInput = (
-                <Checkbox
-                    label={filterValue.name}
-                    checked={!!this.props.selected}
-                    disabled={this.props.disabled}
-                    onChange={(ev, checked) => {
-                        filterValue.selected = checked;
-                        this.props.onChecked(this.props.filterName, filterValue);
-                    }}
-                    styles={{
-                        root: {
-                            margin: 0,
-                            padding: 0,
-                        },
-                        label: {
-                            width: '100%',
-                            padding: 0,
-                        },
-                        checkbox: {
-                            borderRadius: 4,
-                            borderColor: '#038387',
-                            width: 18,
-                            height: 18,
-                            background: this.props.selected ? '#038387' : '#fff',
-                        },
-                        checkmark: {
-                            color: '#fff',
-                        }
-                    }}
-                />
-            );
+            renderInput = <Checkbox
+                styles={{
+                    root: {
+                        padding: 10,
+                    },
+                    label: {
+                        width: '100%'
+                    },
+                    text: {
+                        color: this.props.count && this.props.count === 0 ? this.props.themeVariant.semanticColors.disabledText : textColor
+                    }
+                }}
+                theme={this.props.themeVariant as ITheme}
+                defaultChecked={this.props.selected}
+                disabled={this.props.disabled}
+                title={filterValue.name} 
+                label=  {labelValue}
+                
+                
+                onChange={(ev, checked: boolean) => {
+                    filterValue.selected = checked;
+                    this.props.onChecked(this.props.filterName, filterValue);
+                }}
+                onRenderLabel={(props, defaultRender) => {
+                    return <Text block nowrap styles={textComponentStyles} title={props.label}>{props.label}</Text>;
+                }}
+            />;
         } else {
             renderInput = <ChoiceGroup
                 defaultSelectedKey={this.props.selected ? filterValue.value : undefined}

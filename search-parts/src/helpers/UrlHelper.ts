@@ -134,21 +134,6 @@ export class UrlHelper {
 
         return previewUrl;
     }
-
-    /**
-     * Registers the getSiteBaseUrl Handlebars helper
-     * Usage: {{getSiteBaseUrl Path}}
-     * Returns: https://domain/sites/SITENAME/
-     */
-    public static registerGetSiteBaseUrlHelper(handlebarsInstance: any) {
-      if (!handlebarsInstance.helpers?.getSiteBaseUrl) {
-        handlebarsInstance.registerHelper("getSiteBaseUrl", function (url: string) {
-          if (!url) return "";
-          const match = url.match(/^(https?:\/\/[^\/]+\/sites\/[^\/]+\/)?.*/i);
-          return match && match[1] ? match[1] : url;
-        });
-      }
-    }
 }
 
 export enum PageOpenBehavior {

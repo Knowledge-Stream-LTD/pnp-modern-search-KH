@@ -80,10 +80,32 @@
 		.ms-Checkbox-label {
 			align-items: center;
 		}
+
+		@media (max-width: 768px) {
+  .mobile-filters-toggle {
+    display: block;
+  }
+  #mobileFiltersCollapse {
+    display: block;
+  }
+}
+@media (min-width: 769px) {
+  .mobile-filters-toggle {
+    display: none;
+  }
+  #mobileFiltersCollapse {
+    display: block !important;
+  }
+}
 				        		                
     </style>
 
-    <div class="template vertical">  
+    <!-- Bootstrap mobile filters collapse toggle -->
+<button class="btn btn-outline-primary w-100 mb-2 mobile-filters-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFiltersCollapse" aria-expanded="true" aria-controls="mobileFiltersCollapse">
+  Filters
+</button>
+<div id="mobileFiltersCollapse" class="collapse show">
+  <div class="template vertical">  
 
     {{!--
       PnP Modern Search v4 - Customization for Project Catalog Filters
@@ -279,4 +301,5 @@
 		</div>
     	{{/each}}
 	</div>
+</div>
 </content>

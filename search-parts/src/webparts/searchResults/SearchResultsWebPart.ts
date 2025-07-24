@@ -552,9 +552,6 @@ export default class SearchResultsWebPart extends BaseWebPart<ISearchResultsWebP
         // Initializes dynamic data connections. This could trigger a render if a connection is made with an other component resulting to a render race condition.
         this.ensureDynamicDataSourcesConnection();
 
-        // Register custom Handlebars helpers
-        UrlHelper.registerGetSiteBaseUrlHelper(this.templateService.Handlebars);
-
         return super.onInit();
     }
 

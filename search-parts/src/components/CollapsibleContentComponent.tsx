@@ -54,6 +54,11 @@ export interface ICollapsibleContentComponentState {
      * Current collapse/expand state for the group
      */
     isCollapsed: boolean;
+
+    /**
+     * If there are unapplied changes
+     */
+    hasUnappliedChanges?: boolean;
 }
 
 export class CollapsibleContentComponent extends React.Component<ICollapsibleContentComponentProps, ICollapsibleContentComponentState> {
@@ -66,6 +71,7 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
 
         this.state = {
             isCollapsed: props.defaultCollapsed ? true : false,
+            hasUnappliedChanges: false,
         };
 
         this._onRenderCell = this._onRenderCell.bind(this);
@@ -79,6 +85,24 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
         });
     }
 
+    componentDidMount() {
+        // Listen for unappliedchange events from custom filter web components
+        if (this.componentRef.current) {
+            this.componentRef.current.addEventListener('unappliedchange', this._onUnappliedChange as EventListener);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.componentRef.current) {
+            this.componentRef.current.removeEventListener('unappliedchange', this._onUnappliedChange as EventListener);
+        }
+    }
+
+    private _onUnappliedChange = (event: CustomEvent) => {
+        const hasUnappliedChanges = event.detail?.hasUnappliedChanges;
+        console.log('Parent received unappliedchange:', hasUnappliedChanges);
+        this.setState({ hasUnappliedChanges });
+    };
 
     public render() {
 
@@ -152,29 +176,55 @@ export class CollapsibleContentComponent extends React.Component<ICollapsibleCon
                 color: textColor
             }
         };
+        // Determine if there is an active filter for this group
+        const hasActiveFilter = this.props.contentTemplate && this.props.contentTemplate.includes('filter-active');
+        // You may want to replace the above with a more robust check if you have access to the filter state.
         return (
             <div>
                 <div
                     className={styles["collapsible__filterPanel__body__group__headerRow"]}
-                    tabIndex={0}
-                    onClick={() => {
-                        this._onTogglePanel(props);
-                    }}
-                    onKeyPress={(e) => {
-                        if (e.charCode === 13) {
-                            this._onTogglePanel(props);
-                        }
-                    }}
                 >
-                    <div className={styles["collapsible__filterPanel__body__group__headerContent"]}>
-                        <div className={styles.collapsible__filterPanel__body__headerIcon}>
+                    <div className={
+                        styles["collapsible__filterPanel__body__group__headerContent"] + (hasActiveFilter ? ' ' + styles["collapsible__filterPanel__body__group__headerContent--bold"] : '')
+                    }>
+                        <div
+                            className={styles.collapsible__filterPanel__body__headerIcon}
+                            tabIndex={0}
+                            onClick={() => {
+                                this._onTogglePanel(props);
+                            }}
+                            onKeyPress={(e) => {
+                                if (e.charCode === 13) {
+                                    this._onTogglePanel(props);
+                                }
+                            }}
+                            role="button"
+                            aria-expanded={!props.group.isCollapsed ? true : false}
+                        >
                             {props.group.isCollapsed ? (
                                 <Icon iconName='Add' style={{ color: '#092F63' }} />
                             ) : (
                                 <Icon iconName='Remove' style={{ color: '#092F63' }} />
                             )}
                         </div>
-                        <Text variant={'large'} styles={textComponentStyles} className={styles.collapsible__filterPanel__body__headerTitle}>{props.group.name}</Text>
+                        <Text
+                            variant={'large'}
+                            styles={textComponentStyles}
+                            className={styles.collapsible__filterPanel__body__headerTitle}
+                            tabIndex={0}
+                            onClick={() => {
+                                this._onTogglePanel(props);
+                            }}
+                            onKeyPress={(e) => {
+                                if (e.charCode === 13) {
+                                    this._onTogglePanel(props);
+                                }
+                            }}
+                            role="button"
+                            aria-expanded={!props.group.isCollapsed}
+                        >
+                            {props.group.name}
+                        </Text>
                         {this.props.headerTemplate && (
                             <span className={styles.collapsibleHeaderActions}
                                   dangerouslySetInnerHTML={{ __html: this._domPurify.sanitize(this.props.headerTemplate) }}></span>
