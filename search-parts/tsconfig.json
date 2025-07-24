@@ -18,11 +18,6 @@
     "types": ["webpack-env"],
     "lib": ["es2017", "dom"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "lib"],
-  "parserOptions": {
-    "project": "./search-parts/tsconfig.json",
-    "ecmaVersion": 2018,
-    "sourceType": "module"
-  }
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "lib"]
 }

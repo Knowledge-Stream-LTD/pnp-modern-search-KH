@@ -46,69 +46,51 @@ export class FilterNumberRangeComponent extends React.Component<
   public render() {
     return (
       <div className="section-anim open">
-        <div className="mb-2 mt-2 mx-2">
-          <div className="d-flex align-items-center justify-content-center flex-row-reverse gap-2 mb-2">
-            <span
-              style={{
-                fontSize: "1.3em",
-                minWidth: 24,
-                textAlign: "center",
-              }}
-            >
-              $
-            </span>
-            <input
-              className="form-control flex-grow-1"
-              placeholder="עד"
-              type="number"
-              value={this.state.selectedTo}
-              onChange={(e) => this._updateTo(e, e.target.value)}
-              style={{
-                background: "rgb(250, 251, 252)",
-                border: "1px solid rgb(224, 224, 224)",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-            />
-            <span
-              className="mx-1 text-muted"
-              style={{
-                fontSize: "1.3em",
-                userSelect: "none",
-              }}
-            >
-              -
-            </span>
-            <input
-              className="form-control flex-grow-1"
-              placeholder="מ-"
-              type="number"
-              value={this.state.selectedFrom}
-              onChange={(e) => this._updateFrom(e, e.target.value)}
-              style={{
-                background: "rgb(250, 251, 252)",
-                border: "1px solid rgb(224, 224, 224)",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-            />
-          </div>
-          <div className="d-flex gap-2 justify-content-center">
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={this._applyFilter}
-            >
-              Apply
-            </button>
-            <button
-              className="btn btn-secondary"
-              type="button"
-              onClick={this._clearFilters}
-            >
-              Clear
-            </button>
-          </div>
+        <div className="d-flex align-items-center mb-2 mt-2 mx-2 justify-content-center flex-row-reverse gap-2">
+          <span
+            style={{
+              fontSize: "1.3em",
+              minWidth: 24,
+              textAlign: "center",
+            }}
+          >
+            $
+          </span>
+          <input
+            className="form-control flex-grow-1"
+            placeholder="עד"
+            type="number"
+            value={this.state.selectedTo}
+            onChange={(e) => this._updateTo(e, e.target.value)}
+            style={{
+              background: "rgb(250, 251, 252)",
+              border: "1px solid rgb(224, 224, 224)",
+              borderRadius: 8,
+              textAlign: "center",
+            }}
+          />
+          <span
+            className="mx-1 text-muted"
+            style={{
+              fontSize: "1.3em",
+              userSelect: "none",
+            }}
+          >
+            -
+          </span>
+          <input
+            className="form-control flex-grow-1"
+            placeholder="מ-"
+            type="number"
+            value={this.state.selectedFrom}
+            onChange={(e) => this._updateFrom(e, e.target.value)}
+            style={{
+              background: "rgb(250, 251, 252)",
+              border: "1px solid rgb(224, 224, 224)",
+              borderRadius: 8,
+              textAlign: "center",
+            }}
+          />
         </div>
       </div>
     );
@@ -276,7 +258,7 @@ export class FilterNumberRangeWebComponent extends BaseWebComponent {
   }
   public async connectedCallback() {
     let props = this.resolveAttributes();
-    let renderNumberRange: JSX.Element | null = null;
+    let renderNumberRange: JSX.Element = null;
     if (props.filter) {
       const filter = props.filter as IDataFilterInternal;
       renderNumberRange = (
@@ -298,13 +280,14 @@ export class FilterNumberRangeWebComponent extends BaseWebComponent {
                   operator: value.operator,
                 } as IDataFilterValueInfo;
               }
-              return undefined;
-            }).filter((v): v is IDataFilterValueInfo => !!v);
+            });
             this.dispatchEvent(
               new CustomEvent(ExtensibilityConstants.EVENT_FILTER_UPDATED, {
                 detail: {
                   filterName: filter.filterName,
-                  filterValues: filterValues.concat(updatedValues),
+                  filterValues: filterValues.concat(
+                    updatedValues.filter((v) => v)
+                  ),
                   instanceId: props.instanceId,
                 } as IDataFilterInfo,
                 bubbles: true,

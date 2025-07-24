@@ -1,3 +1,23 @@
+<style>
+.project-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.project-placeholder-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  margin: 0 2px;
+}
+</style>
 {{#each @root.data.items}}
 <div
   class="row g-0 align-items-center border-bottom border-1 border-secondary-subtle py-3"
@@ -11,15 +31,15 @@
     <img
       class="img-fluid rounded mb-2"
       alt="{{prjNameOWSTEXT}}"
-      src="{{prjNameOWSTEXT}}"
+      src="{{prjMainPicOWSIMGE}}"
       style="max-height: 90px; object-fit: cover; border-radius: 10px"
     />
     {{else}}
     <img
-      class="img-fluid rounded mb-2"
-      alt="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/health.svg"
-      src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/health.svg"
-      style="max-height: 90px; object-fit: cover; border-radius: 10px"
+      class="project-placeholder mb-2"
+      src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/prjPlaceholder.png"
+      alt="Project Placeholder"
+      style="width: 90px; height: 90px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 10px; object-fit:cover;"
     />
     {{/if}}
     <span class="text-secondary mt-2" style="font-size: 0.85rem"
@@ -53,9 +73,11 @@
             <span style="font-size: 7px; margin-left: 6px; margin-right: 2px"
               >&#9679;</span
             >
-            {{#if
-            prjStatusMagvinetOWSTEXT}}{{prjStatusMagvinetOWSTEXT}}{{else}}סטטוס
-            לא זמין{{/if}}
+            {{#if isNewProject}}
+              חדש
+            {{else}}
+              {{#if prjStatusMagvinetOWSTEXT}}{{prjStatusMagvinetOWSTEXT}}{{else}}סטטוס לא זמין{{/if}}
+            {{/if}}
           </span>
           <div class="fw-medium fs-6">
             <span class="me-2 mb-auto">
@@ -127,11 +149,11 @@
         {{#if prjTopicsOWSCHCM}} {{#each (split prjTopicsOWSCHCM ";#") as
         |topic|}} {{#if (eq topic "בריאות")}}
         <img
-          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/health.svg"
+          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/Heart%20Pulse.svg"
           alt="בריאות"
           style="
-            height: 18px;
-            width: 18px;
+            height: 28px;
+            width: 28px;
             vertical-align: middle;
             margin-left: 4px;
           "
@@ -141,41 +163,41 @@
           src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/Tea%20Cup.svg"
           alt="חברה"
           style="
-            height: 18px;
-            width: 18px;
+            height: 28px;
+            width: 28px;
             vertical-align: middle;
             margin-left: 4px;
           "
         />
         {{/if}} {{#if (eq topic "חינוך")}}
         <img
-          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/hinoh.svg"
+          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/Notebook.svg"
           alt="חינוך"
           style="
-            height: 18px;
-            width: 18px;
+            height: 28px;
+            width: 28px;
             vertical-align: middle;
             margin-left: 4px;
           "
         />
         {{/if}} {{#if (eq topic "תרבות ופנאי")}}
         <img
-          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/kosher.svg"
+          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/Football.svg"
           alt="תרבות ופנאי"
           style="
-            height: 18px;
-            width: 18px;
+            height: 28px;
+            width: 28px;
             vertical-align: middle;
             margin-left: 4px;
           "
         />
         {{/if}} {{#if (eq topic "עליה וקליטה")}}
         <img
-          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/klita.svg"
+          src="https://knowledgestreamconsulting.sharepoint.com/sites/KerenHayesod/SiteAssets/Hand%20Heart.svg"
           alt="עליה וקליטה"
           style="
-            height: 18px;
-            width: 18px;
+            height: 28px;
+            width: 28px;
             vertical-align: middle;
             margin-left: 4px;
           "
@@ -184,13 +206,12 @@
         <span>{{topic}}</span>
         {{/each}} {{/if}}
       </div>
-      <a
-        href="{{Path}}"
-        target="_blank"
-        class="btn btn-outline-primary rounded-pill fw-bolder border-2 px-4 py-2 ms-3 me-auto"
-        style="width: auto; flex-shrink: 0"
-        >כניסה לפרויקט</a
-      >
+<a
+  href="{{#if (getSiteBaseUrl Path)}}{{getSiteBaseUrl Path}}SitePages/prjPage.aspx?prjid={{prjIDNumberOWSTEXT}}{{else}}#{{/if}}"
+  target="_blank"
+  class="btn btn-outline-primary rounded-pill fw-bolder border-2 px-4 py-2 ms-3 me-auto"
+  style="width: auto; flex-shrink: 0"
+>כניסה לפרויקט</a>
     </div>
   </div>
 </div>
