@@ -47,74 +47,72 @@ export class FilterNumberRangeComponent extends React.Component<
   public render() {
     return (
       <div className="section-anim open">
-        <div className="d-flex align-items-center mb-2 mt-2 mx-2 justify-content-center gap-2">
-          <div className={styles.filterMultiActions + " section-buttons-anim open d-flex gap-2 text-nowrap"}>
-            <button
-              className={"btn btn-link p-0 ms-2 fw-bold text-nowrap clearBtn " + styles.clearBtnColor}
-              type="button"
-              onClick={this._clearFilters}
-              disabled={!this.state.lastAppliedFrom && !this.state.lastAppliedTo}
-            >
-              ניקוי
-            </button>
-            <button
-              className={"btn rounded-pill px-2 fw-bold p-0 text-nowrap applyBtn " + styles.applyBtnBorder}
-              type="button"
-              onClick={this._applyFilter}
-              disabled={
-                this.state.selectedFrom === this.state.lastAppliedFrom &&
-                this.state.selectedTo === this.state.lastAppliedTo
-              }
-            >
-              החל
-            </button>
-          </div>
-          <div className="d-flex align-items-center flex-row-reverse gap-2 flex-grow-1">
-            <span
-              style={{
-                fontSize: "1.3em",
-                minWidth: 24,
-                textAlign: "center",
-              }}
-            >
-              $
-            </span>
-            <input
-              className="form-control flex-grow-1"
-              placeholder="עד"
-              type="number"
-              value={this.state.selectedTo}
-              onChange={(e) => this._updateTo(e, e.target.value)}
-              style={{
-                background: "rgb(250, 251, 252)",
-                border: "1px solid rgb(224, 224, 224)",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-            />
-            <span
-              className="mx-1 text-muted"
-              style={{
-                fontSize: "1.3em",
-                userSelect: "none",
-              }}
-            >
-              -
-            </span>
-            <input
-              className="form-control flex-grow-1"
-              placeholder="מ-"
-              type="number"
-              value={this.state.selectedFrom}
-              onChange={(e) => this._updateFrom(e, e.target.value)}
-              style={{
-                background: "rgb(250, 251, 252)",
-                border: "1px solid rgb(224, 224, 224)",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-            />
-          </div>
+        <div className="d-flex align-items-center mb-2 mt-2 mx-2 justify-content-center flex-row-reverse gap-2">
+          <span
+            style={{
+              fontSize: "1.3em",
+              minWidth: 24,
+              textAlign: "center",
+            }}
+          >
+            $
+          </span>
+          <input
+            className="form-control flex-grow-1"
+            placeholder="עד"
+            type="number"
+            value={this.state.selectedTo}
+            onChange={(e) => this._updateTo(e, e.target.value)}
+            style={{
+              background: "rgb(250, 251, 252)",
+              border: "1px solid rgb(224, 224, 224)",
+              borderRadius: 8,
+              textAlign: "center",
+            }}
+          />
+          <span
+            className="mx-1 text-muted"
+            style={{
+              fontSize: "1.3em",
+              userSelect: "none",
+            }}
+          >
+            -
+          </span>
+          <input
+            className="form-control flex-grow-1"
+            placeholder="מ-"
+            type="number"
+            value={this.state.selectedFrom}
+            onChange={(e) => this._updateFrom(e, e.target.value)}
+            style={{
+              background: "rgb(250, 251, 252)",
+              border: "1px solid rgb(224, 224, 224)",
+              borderRadius: 8,
+              textAlign: "center",
+            }}
+          />
+        </div>
+        <div className={styles.filterMultiActions + " section-buttons-anim open d-flex gap-2 text-nowrap justify-content-start"}>
+          <button
+            className={"btn btn-link p-0 ms-2 fw-bold text-nowrap clearBtn " + styles.clearBtnColor}
+            type="button"
+            onClick={this._clearFilters}
+            disabled={!this.state.lastAppliedFrom && !this.state.lastAppliedTo}
+          >
+            ניקוי
+          </button>
+          <button
+            className={"btn rounded-pill px-2 fw-bold p-0 text-nowrap applyBtn " + styles.applyBtnBorder}
+            type="button"
+            onClick={this._applyFilter}
+            disabled={
+              this.state.selectedFrom === this.state.lastAppliedFrom &&
+              this.state.selectedTo === this.state.lastAppliedTo
+            }
+          >
+            החל
+          </button>
         </div>
       </div>
     );

@@ -1,6 +1,69 @@
 <content id="data-content">
     
     <style>
+        /* Mobile collapse functionality - pure CSS using details/summary */
+        .mobile-filters-wrapper {
+            position: relative;
+        }
+
+        .mobile-filters-toggle {
+            display: none;
+        }
+
+        .mobile-filters-toggle summary {
+            display: none;
+            background: #092F63;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            text-align: center;
+            user-select: none;
+            list-style: none;
+        }
+
+        .mobile-filters-toggle summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .mobile-filters-toggle summary:hover {
+            background: #0a3a7a;
+            transform: translateY(-2px);
+        }
+
+        .mobile-filters-toggle summary::before {
+            content: "📊 הצג מסננים";
+        }
+
+        .mobile-filters-toggle[open] summary::before {
+            content: "✖ הסתר מסננים";
+        }
+
+        /* Hide/show filters on mobile */
+        @media (max-width: 768px) {
+            .mobile-filters-toggle {
+                display: block;
+            }
+
+            .mobile-filters-toggle summary {
+                display: block;
+            }
+            
+            .mobile-filters-content {
+                transition: all 0.3s ease;
+            }
+
+            /* Initially hide content on mobile */
+            .mobile-filters-toggle:not([open]) .mobile-filters-content {
+                display: none;
+            }
+        }
 
 		.filter {
 			margin-bottom: 10px;
@@ -83,7 +146,11 @@
 				        		                
     </style>
 
-    <div class="template vertical">  
+    <div class="mobile-filters-wrapper">
+        <!-- Mobile collapse toggle (details/summary approach) -->
+        <details class="mobile-filters-toggle">
+            <summary></summary>
+            <div class="template vertical mobile-filters-content">  
 
     {{!--
       PnP Modern Search v4 - Customization for Project Catalog Filters
@@ -279,4 +346,6 @@
 		</div>
     	{{/each}}
 	</div>
+        </details>
+    </div>
 </content>
